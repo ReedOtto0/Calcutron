@@ -1,28 +1,23 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
+import { formatExpressionInPlace } from "./inputUtils";
+import useAutoSizingFont from "./useAutoSizingFont";
 
 const Display = forwardRef(({ dispatch, calculate, result }, ref) => {
   const [value, setValue] = useState("");
-  const [changing, setChanging] = useState(false);
+  const [autoSizeInput, resizeInput] = useAutoSizingFont(64, 128);
+  const [autoSizeOutput, resizeOutput] = useAutoSizingFont(32, 64);
+
+  useImperativeHandle(ref, () => autoSizeInput.current, []);
 
   const handleChange = (e) => {
     setValue(e.target.value);
-    if (!changing) {
-      setChanging(true);
-    }
+    resizeInput();
     calculate(e.target.value);
+    resizeOutput();
   };
 
+  const digit = /[0-9]/;
   const mappedKeys = {
-    0: 0,
-    1: 1,
-    2: 2,
-    3: 3,
-    4: 4,
-    5: 5,
-    6: 6,
-    7: 7,
-    8: 8,
-    9: 9,
     ".": ".",
     "%": "%",
     "-": "-",
@@ -44,6 +39,9 @@ const Display = forwardRef(({ dispatch, calculate, result }, ref) => {
   };
   const handleKeyDown = (e) => {
     e.preventDefault();
+    if (digit.test(e.key)) {
+      dispatch(e.key);
+    }
     if (e.key in mappedKeys) {
       dispatch(mappedKeys[e.key]);
     } else if (e.key === "Backspace") {
@@ -57,25 +55,39 @@ const Display = forwardRef(({ dispatch, calculate, result }, ref) => {
 
   return (
     <div
-      className="rounded-b-[2rem] w-full flex-grow flex flex-col items-end justify-end overflow-hidden px-6 py-4 bg-slate-200"
-      style={{ maxWidth: "40rem" }}
+      className="rounded-b-[2rem] w-full flex-grow flex flex-col items-end justify-end overflow-hidden px-4 py-3 bg-slate-200"
+      style={{ maxWidth: "40rem", background: "hwb(170 85% 9%)" }}
     >
       <input
-        className="w-full text-right align-bottom bg-transparent inline-block focus:outline-none"
-        style={{ fontSize: "4rem", lineHeight: "1.25" }}
+        className="w-full text-right align-bottom bg-transparent overflow-x-scroll inline-block focus:outline-none"
+        style={{
+          fontSize: "64px",
+          lineHeight: "1.25",
+          transitionProperty: "height, top, left, transform",
+          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+          transitionDuration: "200ms",
+        }}
         type="text"
         inputMode="none"
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         onBlur={(e) => e.target.focus()}
-        ref={ref}
+        ref={autoSizeInput}
       />
       <p
-        className="w-full text-right align-bottom"
-        style={{ fontSize: "2.5rem", lineHeight: "1.25", minHeight: "40px" }}
+        className="w-full text-right overflow-x-scroll align-bottom"
+        style={{
+          fontSize: "40px",
+          lineHeight: "1.25",
+
+          transitionProperty: "height, top, left, transform",
+          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+          transitionDuration: "1000ms",
+        }}
+        ref={autoSizeOutput}
       >
-        {result}
+        {formatExpressionInPlace(result)[0]}
       </p>
     </div>
   );
