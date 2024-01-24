@@ -1,6 +1,6 @@
 const ops = {
   add: "+",
-  sub: "-",
+  sub: "−",
   mul: "×",
   div: "÷",
   exp: "^",
@@ -72,7 +72,11 @@ const isConst = (str) => {
 };
 
 function parseNum(str) {
-  return parseFloat(str.replace(",", ""));
+  const withoutCommas = str.replaceAll(",", "");
+  //console.log(`Commas removed: ${withoutCommas}`);
+  const parsedNum = parseFloat(withoutCommas);
+  //console.log(`Parsed num: ${parsedNum}`);
+  return parsedNum;
 }
 
 /*
@@ -85,11 +89,13 @@ function extractNumbers(str) {
       //console.log("found number char")
       buffer = buffer.concat(char);
       if (ind === arr.length - 1) {
+        //console.log(`pushing num from buf: ${buffer}`);
         result.push(parseNum(buffer));
       }
     } else if (char !== " ") {
       //console.log("found non-number Char")
       if (buffer.length > 0) {
+        //console.log(`pushing num from buf: ${buffer}`);
         result.push(parseNum(buffer), char);
         buffer = "";
       } else {
