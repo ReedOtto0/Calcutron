@@ -5,15 +5,23 @@ import Display from "./components/Display";
 import KeyPad from "./components/KeyPad";
 import { debounce } from "lodash";
 import { parseEquation } from "./components/calcUtils";
+import { formatExpressionInPlace } from "./components/inputUtils";
 
 export default function Home() {
   const [result, setResult] = useState(" ");
   const textbox = useRef(null);
 
   const calculate = useCallback(
-    debounce((value) => setResult(parseEquation(value)), 400, {
-      trailing: true,
-    }),
+    debounce(
+      (value) => {
+        setResult(parseEquation(value));
+        formatInput(value);
+      },
+      400,
+      {
+        trailing: true,
+      }
+    ),
     []
   );
 
@@ -27,6 +35,28 @@ export default function Home() {
     if (textbox.current) {
       const event = new Event("change", { bubbles: true });
       textbox.current.dispatchEvent(event);
+    }
+  };
+
+  const formatInput = (value) => {
+    if (textbox.current) {
+      const [start, end] = [
+        textbox.current.selectionStart,
+        textbox.current.selectionEnd,
+      ];
+      const [formatedStr, newStart, newEnd] = formatExpressionInPlace(
+        value,
+        start,
+        end
+      );
+      textbox.current.setRangeText(
+        formatedStr,
+        0,
+        textbox.current.value.length,
+        "end"
+      );
+      textbox.current.setSelectionRange(newStart, newEnd);
+      forceOnChange();
     }
   };
 
@@ -86,7 +116,10 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-dvh w-full flex flex-col items-center justify-center">
+    <main
+      className="min-h-dvh w-full flex flex-col items-center justify-center"
+      style={{ background: "hwb(140 97% 0%)" }}
+    >
       <Display
         result={`${result}`}
         dispatch={handleKeys}
