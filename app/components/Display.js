@@ -1,42 +1,45 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { formatExpressionInPlace } from "./inputUtils";
 import useAutoSizingFont from "./useAutoSizingFont";
 
+const digit = /[0-9]/;
+const mappedKeys = {
+  ".": ".",
+  "%": "%",
+  "-": "−",
+  "+": "+",
+  "*": "×",
+  x: "×",
+  X: "×",
+  "/": "÷",
+  "(": "(",
+  ")": ")",
+  "^": "^",
+  r: "√",
+  "!": "!",
+  e: "e",
+  p: "π",
+  s: "sin(",
+  c: "cos(",
+  t: "tan(",
+  Enter: "=",
+};
+
 const Display = forwardRef(({ dispatch, calculate, result }, ref) => {
   const [value, setValue] = useState("");
-  const [autoSizeInput, resizeInput] = useAutoSizingFont(64, 128);
-  const [autoSizeOutput, resizeOutput] = useAutoSizingFont(32, 64);
+  const [autoSizeInput, resizeInput] = useAutoSizingFont(16, 96);
+  const [autoSizeOutput, resizeOutput] = useAutoSizingFont(16, 64);
+  const containerRef = useRef(null);
 
   useImperativeHandle(ref, () => autoSizeInput.current, []);
 
   const handleChange = (e) => {
     setValue(e.target.value);
-    resizeInput();
     calculate(e.target.value);
-    resizeOutput();
+    resizeInput();
+    requestAnimationFrame(resizeOutput);
   };
 
-  const digit = /[0-9]/;
-  const mappedKeys = {
-    ".": ".",
-    "%": "%",
-    "-": "-",
-    "+": "+",
-    "*": "×",
-    x: "×",
-    X: "×",
-    "/": "÷",
-    "(": "(",
-    ")": ")",
-    "^": "^",
-    r: "√",
-    "!": "!",
-    e: "e",
-    p: "π",
-    s: "sin(",
-    c: "cos(",
-    t: "tan(",
-  };
   const handleKeyDown = (e) => {
     e.preventDefault();
     if (digit.test(e.key)) {
@@ -56,16 +59,18 @@ const Display = forwardRef(({ dispatch, calculate, result }, ref) => {
   return (
     <div
       className="rounded-b-[2rem] w-full flex-grow flex flex-col items-end justify-end overflow-hidden px-4 py-3 bg-slate-200"
-      style={{ maxWidth: "40rem", background: "hwb(170 85% 9%)" }}
+      style={{ maxWidth: "42rem", background: "hwb(170 85% 9%)" }}
+      ref={containerRef}
     >
       <input
-        className="w-full text-right align-bottom bg-transparent overflow-x-scroll inline-block focus:outline-none"
+        className="w-full text-right align-bottom overflow-x-scroll overflow-y-clip bg-transparent focus:outline-none"
         style={{
           fontSize: "64px",
-          lineHeight: "1.25",
-          transitionProperty: "height, top, left, transform",
+          lineHeight: "1",
+          height: "64px",
+          transitionProperty: "height",
           transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-          transitionDuration: "200ms",
+          transitionDuration: "150ms",
         }}
         type="text"
         inputMode="none"
@@ -76,14 +81,14 @@ const Display = forwardRef(({ dispatch, calculate, result }, ref) => {
         ref={autoSizeInput}
       />
       <p
-        className="w-full text-right overflow-x-scroll align-bottom"
+        className="w-full text-right align-bottom overflow-x-scroll overflow-y-clip "
         style={{
-          fontSize: "40px",
-          lineHeight: "1.25",
-
-          transitionProperty: "height, top, left, transform",
+          fontSize: "32px",
+          lineHeight: "1",
+          height: "32px",
+          transitionProperty: "height",
           transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-          transitionDuration: "1000ms",
+          transitionDuration: "150ms",
         }}
         ref={autoSizeOutput}
       >

@@ -23,7 +23,11 @@ export default function useAutoSizingFont(min, max) {
       if (fontSize > min) {
         el.style.fontSize = (fontSize - 2).toString().concat("px");
         resize();
+      } else {
+        el.style.height = el.style.fontSize;
       }
+    } else {
+      el.style.height = el.style.fontSize;
     }
   };
 

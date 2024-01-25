@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Display from "./components/Display";
 import KeyPad from "./components/KeyPad";
 import { debounce } from "lodash";
@@ -24,12 +24,6 @@ export default function Home() {
     ),
     []
   );
-
-  useEffect(() => {
-    if (textbox.current) {
-      textbox.current.focus();
-    }
-  }, []);
 
   const forceOnChange = () => {
     if (textbox.current) {
@@ -71,6 +65,18 @@ export default function Home() {
     }
   };
 
+  const setText = (text) => {
+    if (textbox.current) {
+      textbox.current.setRangeText(
+        text,
+        0,
+        textbox.current.value.length,
+        "end"
+      );
+      forceOnChange();
+    }
+  };
+
   const clear = () => {
     if (textbox.current) {
       const length = textbox.current.value.length;
@@ -107,6 +113,9 @@ export default function Home() {
           break;
         case "bk":
           backspace();
+          break;
+        case "=":
+          setText(parseEquation(textbox.current.value));
           break;
         default:
           addText(key);

@@ -69,7 +69,7 @@ export default function KeyPad({ dispatch }) {
       style={{
         display: "grid",
         width: "100%",
-        maxWidth: "40rem",
+        maxWidth: "42rem",
         aspectRatio: "4 / 5",
         gridTemplateColumns: "repeat(4, 1fr)",
         gridTemplateRows: "repeat(5, 1fr)",
