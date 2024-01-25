@@ -1,23 +1,23 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import Display from "./components/Display";
 import KeyPad from "./components/KeyPad";
 import { debounce } from "lodash";
 import { parseEquation } from "./components/calcUtils";
-import { formatExpressionInPlace } from "./components/inputUtils";
+import useManagedTextbox from "./components/useManagedTextbox";
 
 export default function Home() {
   const [result, setResult] = useState(" ");
-  const textbox = useRef(null);
+  const textbox = useManagedTextbox();
 
   const calculate = useCallback(
     debounce(
       (value) => {
         setResult(parseEquation(value));
-        formatInput(value);
+        textbox.formatInput(value);
       },
-      400,
+      150,
       {
         trailing: true,
       }
@@ -25,100 +25,22 @@ export default function Home() {
     []
   );
 
-  const forceOnChange = () => {
-    if (textbox.current) {
-      const event = new Event("change", { bubbles: true });
-      textbox.current.dispatchEvent(event);
-    }
-  };
-
-  const formatInput = (value) => {
-    if (textbox.current) {
-      const [start, end] = [
-        textbox.current.selectionStart,
-        textbox.current.selectionEnd,
-      ];
-      const [formatedStr, newStart, newEnd] = formatExpressionInPlace(
-        value,
-        start,
-        end
-      );
-      textbox.current.setRangeText(
-        formatedStr,
-        0,
-        textbox.current.value.length,
-        "end"
-      );
-      textbox.current.setSelectionRange(newStart, newEnd);
-      forceOnChange();
-    }
-  };
-
-  const addText = (text) => {
-    if (textbox.current) {
-      const [start, end] = [
-        textbox.current.selectionStart,
-        textbox.current.selectionEnd,
-      ];
-      textbox.current.setRangeText(text, start, end, "end");
-      forceOnChange();
-    }
-  };
-
-  const setText = (text) => {
-    if (textbox.current) {
-      textbox.current.setRangeText(
-        text,
-        0,
-        textbox.current.value.length,
-        "end"
-      );
-      forceOnChange();
-    }
-  };
-
-  const clear = () => {
-    if (textbox.current) {
-      const length = textbox.current.value.length;
-      textbox.current.setRangeText("", 0, length, "end");
-      forceOnChange();
-    }
-  };
-
-  const backspace = () => {
-    if (textbox.current) {
-      const [start, end] = [
-        textbox.current.selectionStart,
-        textbox.current.selectionEnd,
-      ];
-      if (start > 0 || start - end !== 0) {
-        if (start - end === 0) {
-          textbox.current.setRangeText("", start - 1, end, "end");
-          forceOnChange();
-        } else {
-          textbox.current.setRangeText("", start, end, "end");
-          forceOnChange();
-        }
-      }
-    }
-  };
-
   const handleKeys = (key) => {
     if (typeof key === "number") {
-      addText(key.toString(10));
+      textbox.addText(key.toString(10));
     } else {
       switch (key) {
         case "AC":
-          clear();
+          textbox.clear();
           break;
         case "bk":
-          backspace();
+          textbox.backspace();
           break;
         case "=":
-          setText(parseEquation(textbox.current.value));
+          textbox.setText(parseEquation(textbox.current.value));
           break;
         default:
-          addText(key);
+          textbox.addText(key);
           break;
       }
     }
@@ -133,7 +55,7 @@ export default function Home() {
         result={`${result}`}
         dispatch={handleKeys}
         calculate={calculate}
-        ref={textbox}
+        ref={textbox.ref}
       />
       <KeyPad dispatch={handleKeys} />
     </main>
