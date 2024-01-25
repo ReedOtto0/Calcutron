@@ -1,0 +1,58 @@
+.keypad {
+  display: grid;
+  width: 100%;
+  padding: 1rem;
+  gap: 8px;
+}
+.portrait {
+  max-width: 42rem;
+  aspect-ratio: 4 / 5;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+}
+
+.landscape {
+  max-width: none;
+  aspect-ratio: 5 / 4;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  font-size: 2.75rem;
+  font-weight: 200;
+  background: hwb(160 90% 5%);
+  aspect-ratio: 1 / 1;
+  vertical-align: bottom;
+}
+
+.operation {
+  background: hwb(160 77% 9%);
+  font-size: 2.5rem;
+}
+
+.equal {
+  background: hwb(160 58% 5%);
+  font-size: 3.75rem;
+}
+
+.clear {
+  background: hwb(200 77% 4%);
+  font-size: 2.25rem;
+  font-weight: 500;
+}
+
+.brackets {
+  background: hwb(160 77% 9%);
+  font-size: 2.5rem;
+}
+
+.back {
+  font-size: 2.25rem;
+  font-weight: 500;
+}

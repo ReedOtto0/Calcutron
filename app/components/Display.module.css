@@ -1,0 +1,48 @@
+.frame {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  overflow: hidden;
+  width: 100%;
+  max-width: 42rem;
+  flex-grow: 1;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  background: hwb(170 86% 7%);
+
+  border-bottom-right-radius: 2rem;
+  border-bottom-left-radius: 2rem;
+}
+
+.display {
+  width: 100%;
+  text-align: right;
+  vertical-align: bottom;
+  overflow-x: scroll;
+  overflow-y: visible;
+
+  white-space: nowrap;
+
+  line-height: 1;
+  transition-property: height;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.input {
+  font-size: 64px;
+  height: 64px;
+  background: transparent;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.result {
+  font-size: 32px;
+  height: 32px;
+}

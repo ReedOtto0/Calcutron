@@ -1,6 +1,7 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { formatExpressionInPlace } from "./inputUtils";
 import useAutoSizingFont from "./useAutoSizingFont";
+import styles from "./Display.module.css";
 
 const digit = /[0-9]/;
 const mappedKeys = {
@@ -27,8 +28,8 @@ const mappedKeys = {
 
 const Display = forwardRef(({ dispatch, calculate, result }, ref) => {
   const [value, setValue] = useState("");
-  const [autoSizeInput, resizeInput] = useAutoSizingFont(16, 96);
-  const [autoSizeOutput, resizeOutput] = useAutoSizingFont(16, 64);
+  const [autoSizeInput, resizeInput] = useAutoSizingFont(28, 88);
+  const [autoSizeOutput, resizeOutput] = useAutoSizingFont(16, 56);
   const containerRef = useRef(null);
 
   useImperativeHandle(ref, () => autoSizeInput.current, []);
@@ -36,7 +37,7 @@ const Display = forwardRef(({ dispatch, calculate, result }, ref) => {
   const handleChange = (e) => {
     setValue(e.target.value);
     calculate(e.target.value);
-    resizeInput();
+    requestAnimationFrame(resizeInput);
     requestAnimationFrame(resizeOutput);
   };
 
@@ -57,21 +58,9 @@ const Display = forwardRef(({ dispatch, calculate, result }, ref) => {
   };
 
   return (
-    <div
-      className="rounded-b-[2rem] w-full flex-grow flex flex-col items-end justify-end overflow-hidden px-4 py-3 bg-slate-200"
-      style={{ maxWidth: "42rem", background: "hwb(170 85% 9%)" }}
-      ref={containerRef}
-    >
+    <div className={styles.frame} ref={containerRef}>
       <input
-        className="w-full text-right align-bottom overflow-x-scroll overflow-y-clip bg-transparent focus:outline-none"
-        style={{
-          fontSize: "64px",
-          lineHeight: "1",
-          height: "64px",
-          transitionProperty: "height",
-          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-          transitionDuration: "150ms",
-        }}
+        className={`${styles.display} ${styles.input}`}
         type="text"
         inputMode="none"
         value={value}
@@ -79,19 +68,12 @@ const Display = forwardRef(({ dispatch, calculate, result }, ref) => {
         onKeyDown={handleKeyDown}
         onBlur={(e) => e.target.focus()}
         ref={autoSizeInput}
+        autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck="false"
       />
-      <p
-        className="w-full text-right align-bottom overflow-x-scroll overflow-y-clip "
-        style={{
-          fontSize: "32px",
-          lineHeight: "1",
-          height: "32px",
-          transitionProperty: "height",
-          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-          transitionDuration: "150ms",
-        }}
-        ref={autoSizeOutput}
-      >
+      <p className={`${styles.display} ${styles.result}`} ref={autoSizeOutput}>
         {formatExpressionInPlace(result)[0]}
       </p>
     </div>

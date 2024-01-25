@@ -1,16 +1,13 @@
 "use client";
 
-export default function CalcButton({ label, click, grid, buttonStyle }) {
+import styles from "./KeyPad.module.css";
+
+export default function CalcButton({ label, click, grid, buttonClass }) {
   return (
     <button
-      className="active:bg-slate-400 rounded-full"
+      className={`active:bg-slate-400 rounded-full ${styles.button} ${buttonClass}`}
       style={{
         gridArea: grid,
-        lineHeight: "0",
-        fontSize: "2.75rem",
-        fontWeight: "200",
-        background: "hwb(160 90% 5%)",
-        ...buttonStyle,
       }}
       onClick={(e) => {
         e.preventDefault();
