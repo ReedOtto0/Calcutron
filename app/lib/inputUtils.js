@@ -1,6 +1,6 @@
 const digits = /[0-9]/;
 
-const isDigit = (char) => {
+const isDigit = (char = false) => {
   return digits.test(char);
 };
 

@@ -41,7 +41,7 @@ function isDigit(char) {
 }
 
 function isNumChar(char) {
-  return isDigit(char) || char === "." || char === ",";
+  return isDigit(char) || char === "." || char === "," || char === "-";
 }
 
 const isFuncChar = (char) => {
