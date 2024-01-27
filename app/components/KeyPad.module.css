@@ -3,32 +3,38 @@
   width: 100%;
   padding: 1rem;
   gap: 8px;
+  transition-property: aspect-ratio;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 .portrait {
-  max-width: 42rem;
+  max-width: 36rem;
   aspect-ratio: 4 / 5;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(5, 1fr);
 }
 
 .landscape {
-  max-width: none;
+  max-width: 42rem;
   aspect-ratio: 5 / 4;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(4, 1fr);
 }
 
 .button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   line-height: 0;
   font-size: 2.75rem;
   font-weight: 200;
   background: hwb(160 90% 5%);
   aspect-ratio: 1 / 1;
   vertical-align: bottom;
+  transition-property: aspect-ratio, background;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms, 50ms;
+}
+
+.narrow {
+  aspect-ratio: 3 / 2;
 }
 
 .operation {
